@@ -78,6 +78,36 @@ app.get("/todos/:id", (req, res) => {
   res.json(todo);
 });
 
+// --- Todo 更新 ---
+app.put("/todos/:id", (req, res) => {
+  const todo = todos.find((t) => t.id === Number(req.params.id));
+  if (!todo) {
+    res.status(404).json({ error: "Todo not found" });
+    return;
+  }
+
+  const { title, description, completed, priority } = req.body;
+
+  if (title !== undefined && (typeof title !== "string" || title.trim() === "")) {
+    res.status(400).json({ error: "Title must not be empty" });
+    return;
+  }
+
+  const validPriorities = ["low", "medium", "high"];
+  if (priority !== undefined && !validPriorities.includes(priority)) {
+    res.status(400).json({ error: "Invalid priority" });
+    return;
+  }
+
+  if (title !== undefined) todo.title = title;
+  if (description !== undefined) todo.description = description;
+  if (completed !== undefined) todo.completed = completed;
+  if (priority !== undefined) todo.priority = priority;
+  todo.updatedAt = new Date().toISOString();
+
+  res.json(todo);
+});
+
 export { app };
 
 // 直接実行時のみサーバを起動
