@@ -108,6 +108,17 @@ app.put("/todos/:id", (req, res) => {
   res.json(todo);
 });
 
+// --- Todo 削除 ---
+app.delete("/todos/:id", (req, res) => {
+  const index = todos.findIndex((t) => t.id === Number(req.params.id));
+  if (index === -1) {
+    res.status(404).json({ error: "Todo not found" });
+    return;
+  }
+  todos.splice(index, 1);
+  res.status(204).send();
+});
+
 export { app };
 
 // 直接実行時のみサーバを起動
