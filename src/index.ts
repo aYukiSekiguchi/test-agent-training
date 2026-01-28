@@ -38,6 +38,36 @@ app.get("/todos", (_req, res) => {
   res.json({ todos });
 });
 
+// --- Todo 作成 ---
+app.post("/todos", (req, res) => {
+  const { title, description, priority } = req.body;
+
+  if (!title || (typeof title === "string" && title.trim() === "")) {
+    res.status(400).json({ error: "Title is required" });
+    return;
+  }
+
+  const validPriorities = ["low", "medium", "high"];
+  if (priority !== undefined && !validPriorities.includes(priority)) {
+    res.status(400).json({ error: "Invalid priority" });
+    return;
+  }
+
+  const now = new Date().toISOString();
+  const todo: Todo = {
+    id: getNextId(),
+    title,
+    description: description ?? "",
+    completed: false,
+    priority: priority ?? "medium",
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  todos.push(todo);
+  res.status(201).json(todo);
+});
+
 // --- Todo 個別取得 ---
 app.get("/todos/:id", (req, res) => {
   const todo = todos.find((t) => t.id === Number(req.params.id));
