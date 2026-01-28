@@ -34,8 +34,30 @@ app.get("/health", (_req, res) => {
 });
 
 // --- Todo 一覧取得 ---
-app.get("/todos", (_req, res) => {
-  res.json({ todos });
+app.get("/todos", (req, res) => {
+  let result = todos;
+
+  const { completed, priority, q } = req.query;
+
+  if (completed !== undefined) {
+    const isCompleted = completed === "true";
+    result = result.filter((t) => t.completed === isCompleted);
+  }
+
+  if (priority !== undefined) {
+    result = result.filter((t) => t.priority === priority);
+  }
+
+  if (typeof q === "string" && q.length > 0) {
+    const lower = q.toLowerCase();
+    result = result.filter(
+      (t) =>
+        t.title.toLowerCase().includes(lower) ||
+        t.description.toLowerCase().includes(lower),
+    );
+  }
+
+  res.json({ todos: result });
 });
 
 // --- Todo 作成 ---
