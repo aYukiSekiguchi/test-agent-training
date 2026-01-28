@@ -33,9 +33,20 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-// ============================================================
-// TODO: 各チケットの REST API エンドポイントをここに追加してください
-// ============================================================
+// --- Todo 一覧取得 ---
+app.get("/todos", (_req, res) => {
+  res.json({ todos });
+});
+
+// --- Todo 個別取得 ---
+app.get("/todos/:id", (req, res) => {
+  const todo = todos.find((t) => t.id === Number(req.params.id));
+  if (!todo) {
+    res.status(404).json({ error: "Todo not found" });
+    return;
+  }
+  res.json(todo);
+});
 
 export { app };
 
